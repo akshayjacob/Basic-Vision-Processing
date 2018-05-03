@@ -1,64 +1,65 @@
+function [baseOut, compOut, finalOut] = ImageProcessing(base_image, comp_image)
 %% Read in Image
-img1 = imread('TestImage1.jpg');
-img2 = imread('TestImage2.jpg');
+img1 = imread(base_image);
+img2 = imread(comp_image);
 
 %% Display Colour Images
 figure
-imshow(img1)
+baseOut = imshow(img1);
 figure
-imshow(img2)
+compOut = imshow(img2);
 
 %% gray scale conversion
 imgGray1 = rgb2gray(img1);
 imgGray2 = rgb2gray(img2);
 
 %% display b&w pic
-figure
-imshow(imgGray1)
-figure
-imshow(imgGray2)
+%figure
+%imshow(imgGray1)
+%figure
+%imshow(imgGray2)
 
 %% Find the difference in the image(image substraction)
 imgDiff = abs(imgGray1 - imgGray2);
-figure
-imshow(imgDiff)
+%figure
+%imshow(imgDiff)
 
 %% Finding Max location of Difference
 maxDiff = max(max(imgDiff));
 [iRow, iCol] = find(imgDiff == maxDiff);
 [m,n] = size(imgDiff);
-imshow(imgDiff)
-hold on
-plot(iCol, iRow, 'r*')
+%imshow(imgDiff)
+%hold on
+%plot(iCol, iRow, 'r*')
 
 %% Use imtool to determine Threshhold and Length
-imtool(imgDiff)
+%imtool(imgDiff)
 
 %% Threshholding
 imgThresh = imgDiff > 15;
-figure
-imshow(imgThresh)
-hold on
-plot(iCol,iRow, 'r*')
-hold off
+%figure
+%imshow(imgThresh)
+%hold on
+%plot(iCol,iRow, 'r*')
+%hold off
 
 %% Fill in Regions
 imgFilled = bwareaopen(imgThresh, 15);
-figure
-imshow(imgFilled)
+%figure
+%imshow(imgFilled)
 
 %% Overlay on original image
 % uses an external function called imoverlay
 imgBoth = imoverlay(img2,imgFilled,[1,0,0]);
 figure
-imshow(imgBoth)
+finalOut = imshow(imgBoth);
 
 %% threshhold of objects of correct size
 imageStats = regionprops(imgFilled, 'MajorAxisLength');
 imgLengths = [imageStats.MajorAxisLength];
 idx = (imgLengths > 80);
 imageStatsFinal = imageStats(idx); 
-disp(imageStatsFinal)
+%disp(imageStatsFinal)
 
 %% Determine if Change is Significant
 if isempty(imageStatsFinal)
@@ -67,9 +68,4 @@ else
     disp('Something is here')
 end
 
-
-
-
-
-
-
+end
